@@ -1,0 +1,56 @@
+{
+  "places" : [
+    "Köln, Deutschland",
+    "Hamburg, Deutschland",
+    "Dresden, Deutschland",
+    "Mallorca, Spanien",
+    "Berlin, Deutschland",
+    "Stuttgart, Deutschland",
+    "München, Deutschland",
+    "Koblenz, Deutschland",
+    "Bonn, Deutschland",
+    "Noordwijk, Südholland, Niederlande",
+    "London, Großbritannien",
+    "Göteborg, Schweden",
+    "Mora, Schweden",
+    "Östersund, Schweden",  
+    "Vilhelmina, Schweden",
+    "Stockholm, Schweden",  
+    "Vancouver, Canada",
+    "Canmore, Canada",
+    "Winnipeg, Canada",
+    "Wawa, ON, Canada",
+    "Toronto, Canada"
+  ],
+  "routes" : [
+    {
+      "label":
+        "Schweden 2011",
+      "locations": [
+        "Stockholm, Schweden",
+        "Mora, Schweden",
+        "Vilhelmina, Schweden",
+        "Östersund, Schweden",
+        "Göteborg, Schweden"
+      ]
+    },
+    {
+      "label":
+        "Canada 2010",
+      "locations": [
+        "Vancouver, Canada",
+        "Kamloop, Canada",
+        "Canmore, Canada",
+        "Calgary, Canada",
+        "Winnipeg, Canada",
+        "Medicine Hat, Canada",
+        "Regina, Canada",
+        "Wawa, ON, Canada",
+        "Sault Ste. Marie, Canada",
+        "Sadbury, Canada",
+        "Thunderbay, ON, Canada",
+        "Toronto, Canada"
+      ]
+    }
+  ]
+}

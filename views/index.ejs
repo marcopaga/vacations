@@ -1,0 +1,83 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<script src="http://maps.google.com/maps/api/js?sensor=true"></script>
+<script src="/javascripts/jquery-1.6.2.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script type="text/javascript">
+
+var socket = io.connect();
+
+  var map = undefined;
+
+  function initMap() {
+    var latlng = new google.maps.LatLng(51.21, 6.78);
+    var myOptions = {
+      zoom: 8,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  }
+  
+  socket.on('successfulGeocode', function (locationInfo) {
+    $.each(locationInfo, function (index, value) {
+      var location = value['location'];
+      var latLng = new google.maps.LatLng(location['lat'], location['lng']);
+      var newMarker = new google.maps.Marker({
+        position: latLng,
+        map: map,
+        title: locationInfo['label']
+      });
+      map.setCenter(latLng);
+    });
+    
+  });
+  
+  socket.on('showRoute', function (routeInfo) {
+    var label = routeInfo['label'];
+    var routeLocations = routeInfo['routeLocations'];
+    
+    console.log(label);
+    console.log(routeLocations);
+  })  
+  
+  $(document).ready(function(){
+    initMap();
+    
+    $('#searchButton').click(function() {  
+      var address = $('#address').val();
+      var isPublic = ( $('#isPublic:checked').val() !== undefined);
+      socket.emit('geocodeAddress', {'address': address, 'isPublic': isPublic});
+      });
+      
+    $('#showVacationsButton').click(function () {
+      socket.emit('showVacations');
+      map.setZoom(3);
+    });
+    
+   });
+
+</script>
+
+</head>
+<body>
+  <div id="address_entry" style="width:100%, height=10%">
+    
+    <form id="searchForm" action="">
+      <label id="address_label" for="address">Addresse:</label>
+      <input id="address" type="text">
+      <label id="isPublic_label" for="isPublic">Öffentlich:</label>
+      <input id="isPublic" type="checkbox">
+      <input id="searchButton" type="button" value="Wo ist das?">
+    </from>
+    
+    <form id="vacationsForm" action="">
+      <input id="showVacationsButton" type="button" value="Urlaubsziele">
+    </form>
+    <div id="map_canvas" style="width:100%; height:90%"></div>  
+  </div>
+</body>
+</html>
