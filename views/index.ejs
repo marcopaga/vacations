@@ -42,22 +42,39 @@ var socket = io.connect();
     
     console.log(label);
     console.log(routeLocations);
-  })  
+  });
+  
+  var findByAddress = function findByAddress () {
+    var address = $('#address').val();
+    var isPublic = ( $('#isPublic:checked').val() !== undefined);
+    socket.emit('geocodeAddress', {'address': address, 'isPublic': isPublic});
+  }  
   
   $(document).ready(function(){
     initMap();
     
     $('#searchButton').click(function() {  
-      var address = $('#address').val();
-      var isPublic = ( $('#isPublic:checked').val() !== undefined);
-      socket.emit('geocodeAddress', {'address': address, 'isPublic': isPublic});
+        findByAddress();
       });
+      
+    $('#address').keydown(function (event) {
+      if(event.keyCode == 13) {
+        findByAddress();
+      }
+    });      
       
     $('#showVacationsButton').click(function () {
       socket.emit('showVacations');
       map.setZoom(3);
     });
     
+    $(window).keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+        }
+      });
+      
    });
 
 </script>
