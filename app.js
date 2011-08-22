@@ -42,11 +42,34 @@ app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 io = socketio.listen(app);
 
+var sleep = function sleep (seconds, callback) {
+	setTimeout(callback, seconds * 1000);
+};
+
+var reverseGeoBasePath = 'http://maps.google.com/maps/api/geocode/json?';
+
+var reverseGeocode = function reverseGeocode (address, callback) {
+	var requestParameters = {sensor: 'false', address: address};
+	var query = querystring.stringify(requestParameters);
+	
+	jsonreq.post(reverseGeoBasePath + query, requestParameters, function (err, apiResponse) {
+		if(apiResponse.status === 'OK'){
+			var location = apiResponse["results"][0].geometry.location;
+			var address = apiResponse["results"][0].formatted_address;
+			var result = [{"location": location, "label": address}];
+			callback(result);
+		} else {
+			console.log(JSON.stringify(apiResponse));
+			callback(undefined);
+		}
+	});
+};
+
 io.sockets.on('connection', function (socket) {
 	
 	socket.on('geocodeAddress', function (data) {
-		var address = data['address'];
-		var isPublic = data['isPublic']
+		var address = data.address;
+		var isPublic = data.isPublic;
 		reverseGeocode(address, function (result) {
 			if(isPublic){
 				io.sockets.emit('successfulGeocode', result);
@@ -58,17 +81,18 @@ io.sockets.on('connection', function (socket) {
 		
 	socket.on('showVacations', function (data) {
 		fs.readFile('vacations.json', function (err, data) {
+			var vacations;
 			if(err){
 				console.log(JSON.stringify(err));
 			} else {
 				try{
-					var vacations = JSON.parse(data);	
+					vacations = JSON.parse(data);	
 				} catch(Exception){
 					console.log(JSON.stringify(Exception));
 					vacations=[];
 				}
 
-				async.forEachSeries(vacations['places'],function (each, forEachCallback) {
+				async.forEachSeries(vacations.places,function (each, forEachCallback) {
 					reverseGeocode(each, function (result) {
 						sleep(0.2,forEachCallback);
 						socket.emit('successfulGeocode', result);
@@ -82,27 +106,3 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 });
-
-
-var reverseGeoBasePath = 'http://maps.google.com/maps/api/geocode/json?';
-
-var reverseGeocode = function reverseGeocode (address, callback) {
-	var requestParameters = {sensor: 'false', address: address};
-	var query = querystring.stringify(requestParameters);
-	
-	jsonreq.post(reverseGeoBasePath + query, requestParameters, function (err, apiResponse) {
-		if(apiResponse["status"] === 'OK'){
-			var location = apiResponse["results"][0]["geometry"]["location"];
-			var address = apiResponse["results"][0]["formatted_address"];
-			var result = [{"location": location, "label": address}];
-			callback(result);
-		} else {
-			console.log(JSON.stringify(apiResponse));
-			callback(undefined);
-		}
-	});
-}
-
-var sleep = function sleep (seconds, callback) {
-	setTimeout(callback, seconds * 1000);
-}
