@@ -1,9 +1,9 @@
+var geocode = require("./geocode")
+
 var http = require('http');
-var querystring = require('querystring');
 var url = require('url');
 var fs = require('fs');
 
-var jsonreq = require('jsonreq');
 var socketio = require('socket.io');
 var async = require('async');
 
@@ -46,31 +46,12 @@ var sleep = function sleep (seconds, callback) {
 	setTimeout(callback, seconds * 1000);
 };
 
-var reverseGeoBasePath = 'http://maps.google.com/maps/api/geocode/json?';
-
-var reverseGeocode = function reverseGeocode (address, callback) {
-	var requestParameters = {sensor: 'false', address: address};
-	var query = querystring.stringify(requestParameters);
-	
-	jsonreq.post(reverseGeoBasePath + query, requestParameters, function (err, apiResponse) {
-		if(apiResponse.status === 'OK'){
-			var location = apiResponse["results"][0].geometry.location;
-			var address = apiResponse["results"][0].formatted_address;
-			var result = [{"location": location, "label": address}];
-			callback(result);
-		} else {
-			console.log(JSON.stringify(apiResponse));
-			callback(undefined);
-		}
-	});
-};
-
 io.sockets.on('connection', function (socket) {
 	
 	socket.on('geocodeAddress', function (data) {
 		var address = data.address;
 		var isPublic = data.isPublic;
-		reverseGeocode(address, function (result) {
+		geocode.reverseGeocode(address, function (result) {
 			if(isPublic){
 				io.sockets.emit('successfulGeocode', result);
 			} else {
