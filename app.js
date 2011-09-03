@@ -38,7 +38,8 @@ app.get('/', function(req, res){
   });
 });
 
-app.listen(3000);
+var appTcpPort = process.env.PORT || 3000;
+app.listen(appTcpPort);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 io = socketio.listen(app);
 
