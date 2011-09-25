@@ -75,7 +75,7 @@ io.sockets.on('connection', function (socket) {
 				}
 
 				async.forEachSeries(vacations.places,function (each, forEachCallback) {
-					reverseGeocode(each, function (result) {
+					geocode.reverseGeocode(each, function (result) {
 						sleep(0.2,forEachCallback);
 						socket.emit('successfulGeocode', result);
 					});
