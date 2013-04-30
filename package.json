@@ -3,10 +3,10 @@
   , "version": "0.0.1"
   , "private": true
   , "dependencies": {
-      "express": "2.4.3",
-      "ejs": ">= 0.0.1",
+      "express": "3.2.0",
+      "ejs": "0.8.3",
       "async": "0.1.9",
       "jsonreq": "0.1.0",
-      "socket.io": "0.7.7"    
+      "socket.io": "0.9.14"    
   }
 }

@@ -9,7 +9,7 @@ var async = require('async');
 
 var express = require('express');
 
-var app = module.exports = express.createServer();
+var app = module.exports = express();
 
 // Configuration
 
@@ -39,10 +39,10 @@ app.get('/', function(req, res){
 });
 
 var appTcpPort = process.env.PORT || 3000;
-app.listen(appTcpPort);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-io = socketio.listen(app);
+var server = http.createServer(app);
+var io = socketio.listen(server);
 
+server.listen(appTcpPort);
 var sleep = function sleep (seconds, callback) {
 	setTimeout(callback, seconds * 1000);
 };
